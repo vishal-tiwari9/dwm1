@@ -346,7 +346,84 @@ System.out.print(val + " ");
 System.out.println();
 }
 }
-}`
+}
+
+
+
+#####Python #####
+
+import numpy as np
+
+def cal_diff(a, m):
+    diff = [abs(a - mean) for mean in m]
+    return diff.index(min(diff))
+
+def cal_mean(k, p, n):
+    m = []
+    for i in range(p):
+        cluster_points = [val for val in k[i] if val != -1]
+        if cluster_points:
+            m.append(sum(cluster_points) / len(cluster_points))
+        else:
+            m.append(0)
+    return m
+
+def check_convergence(k, tempk):
+    return np.array_equal(k, tempk)
+
+def main():
+    n = int(input("Enter the number of data points: "))
+    d = list(map(int, input(f"Enter {n} data points: ").split()))
+    p = int(input("Enter number of clusters (k): "))
+
+    k = [[-1 for _ in range(n)] for _ in range(p)]
+    tempk = [[-1 for _ in range(n)] for _ in range(p)]
+    m = [d[i] for i in range(p)]  # Initial means
+
+    converged = False
+
+    while not converged:
+        # Reset clusters
+        for i in range(p):
+            for j in range(n):
+                k[i][j] = -1
+
+        cluster_counts = [0] * p
+
+        # Assign each point to nearest mean
+        for i in range(n):
+            cluster = cal_diff(d[i], m)
+            k[cluster][cluster_counts[cluster]] = d[i]
+            cluster_counts[cluster] += 1
+
+        # Calculate new means
+        m = cal_mean(k, p, n)
+
+        # Check for convergence
+        converged = check_convergence(k, tempk)
+        tempk = [row.copy() for row in k]
+
+        # Display current iteration results
+        print("\nCurrent Clusters:")
+        for i in range(p):
+            cluster_vals = [val for val in k[i] if val != -1]
+            print(f"Cluster {i+1}: {' '.join(map(str, cluster_vals))}")
+
+        print("Means: ", end="")
+        for i in range(p):
+            print(f"m{i+1}={m[i]:.2f} ", end="")
+        print()
+
+    print("\nFinal Clusters:")
+    for i in range(p):
+        cluster_vals = [val for val in k[i] if val != -1]
+        print(f"Cluster {i+1}: {' '.join(map(str, cluster_vals))}")
+
+if __name__ == "__main__":
+    main()
+
+
+`
   },
   'naive-bayes': {
     title: 'Naive Bayes (4th Exp)',
