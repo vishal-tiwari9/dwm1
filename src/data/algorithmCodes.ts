@@ -105,109 +105,137 @@ System.out.println("\\n");
   },
   'apriori': {
     title: 'Apriori (9th Exp)',
-    code: `class AprioriCalculation:
-def __init__(self):
-self.candidates = []
-self.numItems = 0
-self.numTransactions = 0
-self.minSup = 0.0
-self.oneVal = []
-self.itemSep = " "
-self.transactions = []
+    code: `
+    class AprioriCalculation:
+    def __init__(self):
+        self.candidates = []
+        self.numItems = 0
+        self.numTransactions = 0
+        self.minSup = 0.0
+        self.oneVal = []
+        self.itemSep = " "
+        self.transactions = []
 
-def aprioriProcess(self):
-self.getConfig()
-print("Apriori algorithm has started.\\n")
-import time
-start = time.time()
-itemsetNumber = 0
-while True:
-itemsetNumber += 1
-self.generateCandidates(itemsetNumber)
-if not self.candidates:
-break
-print(f"\\nFrequent {itemsetNumber}-itemsets")
-print(self.candidates)
-self.calculateFrequentItemsets(itemsetNumber)
-if len(self.candidates) <= 1:
-break
-end = time.time()
-print(f"\\nExecution time is {(end - start):.3f} seconds")
+    def aprioriProcess(self):
+        self.getConfig()
+        print("Apriori algorithm has started.\n")
 
-def getInput(self, prompt):
-return input(prompt).strip()
+        import time
+        start = time.time()
+        itemsetNumber = 0
 
-def getConfig(self):
-print("Enter number of items per transaction:")
-self.numItems = int(self.getInput("> "))
-print("Enter number of transactions:")
-self.numTransactions = int(self.getInput("> "))
-print("Enter minimum support as a decimal (e.g., 0.2 for 20%):")
-self.minSup = float(self.getInput("> "))
-self.oneVal = ["1"] * self.numItems
-change_val = self.getInput("Enter 'y' to change the value each row recognizes as a '1', else press enter: ")
-if change_val.lower() == 'y':
-for i in range(self.numItems):
-val = self.getInput(f"Enter value for column {i+1}: ")
-if val:
-self.oneVal[i] = val
-print(f"\\nEnter {self.numTransactions} transactions. Each transaction is {self.numItems} items separated by space (' '):")
-for i in range(self.numTransactions):
-while True:
-line = self.getInput(f"Transaction {i+1}: ")
-parts = line.strip().split(self.itemSep)
-if len(parts) == self.numItems:
-self.transactions.append(parts)
-break
-else:
-print(f"Invalid input. Please enter exactly {self.numItems} items.")
+        while True:
+            itemsetNumber += 1
+            self.generateCandidates(itemsetNumber)
 
-def generateCandidates(self, n):
-tempCandidates = []
-if n == 1:
-for i in range(1, self.numItems + 1):
-tempCandidates.append(str(i))
-elif n == 2:
-for i in range(len(self.candidates)):
-for j in range(i + 1, len(self.candidates)):
-c1 = self.candidates[i].split()
-c2 = self.candidates[j].split()
-candidate = f"{c1[0]} {c2[0]}"
-tempCandidates.append(candidate)
-else:
-for i in range(len(self.candidates)):
-for j in range(i + 1, len(self.candidates)):
-c1 = self.candidates[i].split()
-c2 = self.candidates[j].split()
-if c1[:-1] == c2[:-1]:
-candidate = ' '.join(c1 + [c2[-1]])
-tempCandidates.append(candidate)
-self.candidates = tempCandidates
+            if not self.candidates:
+                break
 
-def calculateFrequentItemsets(self, n):
-frequentCandidates = []
-counts = [0] * len(self.candidates)
-for transaction_vals in self.transactions:
-transaction = [transaction_vals[i] == self.oneVal[i] for i in range(self.numItems)]
-for idx, candidate in enumerate(self.candidates):
-items = list(map(int, candidate.split()))
-match = True
-for item in items:
-if not transaction[item - 1]:
-match = False
-break
-if match:
-counts[idx] += 1
-for idx, candidate in enumerate(self.candidates):
-support = counts[idx] / self.numTransactions
-if support >= self.minSup:
-frequentCandidates.append(candidate)
-print(f"{candidate} support: {support:.4f}")
-self.candidates = frequentCandidates
+            print(f"\nFrequent {itemsetNumber}-itemsets")
+            print(self.candidates)
+
+            self.calculateFrequentItemsets(itemsetNumber)
+
+            if len(self.candidates) <= 1:
+                break
+
+        end = time.time()
+        print(f"\nExecution time is {(end - start):.3f} seconds")
+
+    def getInput(self, prompt):
+        return input(prompt).strip()
+
+    def getConfig(self):
+        print("Enter number of items per transaction:")
+        self.numItems = int(self.getInput("> "))
+
+        print("Enter number of transactions:")
+        self.numTransactions = int(self.getInput("> "))
+
+        print("Enter minimum support as a decimal (e.g., 0.2 for 20%):")
+        self.minSup = float(self.getInput("> "))
+
+        self.oneVal = ["1"] * self.numItems
+
+        change_val = self.getInput("Enter 'y' to change the value each row recognizes as a '1', else press enter: ")
+
+        if change_val.lower() == 'y':
+            for i in range(self.numItems):
+                val = self.getInput(f"Enter value for column {i+1}: ")
+                if val:
+                    self.oneVal[i] = val
+
+        print(f"\nEnter {self.numTransactions} transactions. Each transaction is {self.numItems} items separated by space (' '):")
+
+        for i in range(self.numTransactions):
+            while True:
+                line = self.getInput(f"Transaction {i+1}: ")
+                parts = line.strip().split(self.itemSep)
+                if len(parts) == self.numItems:
+                    self.transactions.append(parts)
+                    break
+                else:
+                    print(f"Invalid input. Please enter exactly {self.numItems} items.")
+
+    def generateCandidates(self, n):
+        tempCandidates = []
+
+        if n == 1:
+            for i in range(1, self.numItems + 1):
+                tempCandidates.append(str(i))
+
+        elif n == 2:
+            for i in range(len(self.candidates)):
+                for j in range(i + 1, len(self.candidates)):
+                    c1 = self.candidates[i].split()
+                    c2 = self.candidates[j].split()
+                    candidate = f"{c1[0]} {c2[0]}"
+                    tempCandidates.append(candidate)
+
+        else:
+            for i in range(len(self.candidates)):
+                for j in range(i + 1, len(self.candidates)):
+                    c1 = self.candidates[i].split()
+                    c2 = self.candidates[j].split()
+                    if c1[:-1] == c2[:-1]:
+                        candidate = ' '.join(c1 + [c2[-1]])
+                        tempCandidates.append(candidate)
+
+        self.candidates = tempCandidates
+
+    def calculateFrequentItemsets(self, n):
+        frequentCandidates = []
+        counts = [0] * len(self.candidates)
+
+        for transaction_vals in self.transactions:
+            transaction = [transaction_vals[i] == self.oneVal[i] for i in range(self.numItems)]
+
+            for idx, candidate in enumerate(self.candidates):
+                items = list(map(int, candidate.split()))
+                match = True
+
+                for item in items:
+                    if not transaction[item - 1]:
+                        match = False
+                        break
+
+                if match:
+                    counts[idx] += 1
+
+        for idx, candidate in enumerate(self.candidates):
+            support = counts[idx] / self.numTransactions
+            if support >= self.minSup:
+                frequentCandidates.append(candidate)
+            print(f"{candidate} support: {support:.4f}")
+
+        self.candidates = frequentCandidates
+
 
 if __name__ == "__main__":
-ap = AprioriCalculation()
-ap.aprioriProcess()`
+    ap = AprioriCalculation()
+    ap.aprioriProcess()
+
+    `
   },
   'k-means': {
     title: 'K-Means (7th Exp)',
