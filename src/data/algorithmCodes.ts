@@ -101,7 +101,95 @@ break;
 System.out.println("\\n");
 }
 }
-}`
+}
+
+
+
+###Python####
+def main():
+    # Taking inputs
+    no_t = int(input("Enter number of transactions: "))
+    no_i = int(input("Enter number of items in the Itemset: "))
+    min_sup = float(input("Enter the minimum support: "))
+
+    print("Enter the item set (use lowercase letters). Enter '0' to end each transaction.")
+    d = [[[] for _ in range(2)] for _ in range(no_t)]
+
+    # Input transactions
+    for i in range(no_t):
+        print(f"Transaction TID {i + 1}")
+        items = []
+        while True:
+            s = input()
+            if s == '0':
+                break
+            items.append(s)
+        d[i][1] = items
+
+    # Create item set (a, b, c, ...)
+    item_set = [chr(97 + i) for i in range(no_i)]
+    print("Item Set:", " ".join(item_set))
+
+    # Calculate support count for each item
+    sup = [0] * no_i
+    for j in range(no_i):
+        s = 0
+        for i in range(no_t):
+            for val in d[i][1]:
+                if val == '0':
+                    break
+                if val[0] == item_set[j]:
+                    s += 1
+        sup[j] = s
+
+    print("\nSupports:", " ".join(map(str, sup)))
+
+    # Filter items by minimum support
+    item_set_new = [''] * no_i
+    count = 0
+    for k in range(no_i):
+        if sup[k] >= min_sup:
+            item_set_new[k] = item_set[k]
+            count += 1
+
+    # Sort items based on support (descending)
+    for i in range(no_i - 1):
+        for j in range(no_i - i - 1):
+            if sup[j] < sup[j + 1]:
+                sup[j], sup[j + 1] = sup[j + 1], sup[j]
+                item_set_new[j], item_set_new[j + 1] = item_set_new[j + 1], item_set_new[j]
+
+    # Final frequent items after filtering
+    is_final = []
+    sup_final = []
+    for i in range(no_i):
+        if item_set_new[i].isalpha():
+            is_final.append(item_set_new[i])
+            sup_final.append(sup[i])
+
+    print("\n\nFrequent Items (after applying min support):")
+    for i in range(len(is_final)):
+        print(f"{is_final[i]}\t{sup_final[i]}")
+
+    # Simulated FP-Tree Output
+    print("\nFP-Tree (one path per transaction):")
+    for i in range(no_t):
+        print(f"Transaction No: {i + 1}")
+        print("Root", end="")
+        for m in range(len(is_final)):
+            for val in d[i][1]:
+                if val == '0':
+                    break
+                if val[0] == is_final[m] and sup_final[m] > 0:
+                    print(f" -> {is_final[m]}", end="")
+                    sup_final[m] -= 1
+                    break
+        print("\n")
+
+if __name__ == "__main__":
+    main()
+
+`
   },
   'apriori': {
     title: 'Apriori (9th Exp)',
