@@ -105,8 +105,7 @@ System.out.println("\\n");
   },
   'apriori': {
     title: 'Apriori (9th Exp)',
-    code: `
-    class AprioriCalculation:
+    code: `class AprioriCalculation:
     def __init__(self):
         self.candidates = []
         self.numItems = 0
@@ -234,6 +233,14 @@ System.out.println("\\n");
 if __name__ == "__main__":
     ap = AprioriCalculation()
     ap.aprioriProcess()
+       
+
+       
+
+
+      
+
+
 
     `
   },
